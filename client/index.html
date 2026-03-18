@@ -4,24 +4,71 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Security Guardian Web Game</title>
-    <style>
-        body { margin: 0; padding: 0; background-color: #000; overflow: hidden; }
-        #game-container { width: 100vw; height: 100vh; }
-        /* UI 레이어: Phaser 위에 겹쳐지도록 설정 */
-        #ui-layer {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            pointer-events: none; /* 평소엔 클릭이 Phaser로 전달되도록 함 */
-            z-index: 10;
-        }
-        .modal { pointer-events: auto; } /* 모달이 뜰 때만 클릭 가능하게 */
-    </style>
 </head>
 <body>
+  <div id="desktop-shell" aria-hidden="true">
+    <div class="desktop-gradient"></div>
+    <div class="desktop-icons">
+      <div class="desktop-icon">
+        <div class="icon-art recycle-icon"></div>
+        <span>휴지통</span>
+      </div>
+      <div class="desktop-icon">
+        <div class="icon-art folder-icon"></div>
+        <span>문서</span>
+      </div>
+      <div class="desktop-icon">
+        <div class="icon-art browser-icon"></div>
+        <span>인터넷</span>
+      </div>
+      <div class="desktop-icon">
+        <div class="icon-art drive-icon"></div>
+        <span>내 PC</span>
+      </div>
+    </div>
+
+    <div class="taskbar">
+      <div class="taskbar-left">
+        <div class="windows-badge" aria-hidden="true">
+          <span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+
+      <div class="taskbar-center">
+        <div class="search-pill">
+          <span class="search-icon"></span>
+          <span>검색</span>
+        </div>
+        <div class="taskbar-app">
+          <span class="app-mark browser-mark"></span>
+        </div>
+        <div class="taskbar-app">
+          <span class="app-mark doc-mark"></span>
+        </div>
+        <div class="taskbar-app">
+          <span class="app-mark folder-mark"></span>
+        </div>
+        <div class="taskbar-app">
+          <span class="app-mark chat-mark"></span>
+        </div>
+      </div>
+
+      <div class="taskbar-right">
+        <div class="tray-icons">
+          <span class="tray-icon wifi-icon"></span>
+          <span class="tray-icon volume-icon"></span>
+          <span class="tray-icon battery-icon"></span>
+        </div>
+        <div class="clock-block">
+          <strong id="taskbarTime">00:00</strong>
+          <span id="taskbarDate">0000-00-00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div id="game-container"></div>
   <div id="ui-layer">
-    
     <div id="mailModal" class="hidden">
         <div class="mail-content">
             <h2 class="mail-title">안내 메일</h2>
@@ -44,8 +91,7 @@
                 </div>
         </div>
     </div>
-
-</div>
+  </div>
   <script type="module" src="/src/main.js"></script>
 </body>
 </html>

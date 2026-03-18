@@ -13,7 +13,8 @@ const config = {
     width: 1920,
     height: 1080,
     parent: 'game-container',
-    backgroundColor: '#000000',
+    transparent: true,
+    backgroundColor: 'rgba(0,0,0,0)',
     scale: {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH
@@ -38,12 +39,37 @@ let currentEmployeeId = null;
 // ==========================================
 const mailModal = document.getElementById('mailModal');
 const exeButton = document.getElementById('exeButton');
+const desktopShell = document.getElementById('desktop-shell');
 
 const quizModal = document.getElementById('quizModal');
 const quizTitle = document.getElementById('quizTitle');
 const closeQuizBtn = document.getElementById('closeQuizBtn');
 const quizQuestionText = document.getElementById('quizQuestionText');
 const quizChoicesContainer = document.getElementById('quizChoicesContainer');
+const taskbarTime = document.getElementById('taskbarTime');
+const taskbarDate = document.getElementById('taskbarDate');
+
+document.body.classList.add('boot-mode');
+desktopShell.classList.add('hidden');
+
+function updateTaskbarClock() {
+    const now = new Date();
+
+    taskbarTime.textContent = now.toLocaleTimeString('ko-KR', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+    });
+
+    taskbarDate.textContent = now.toLocaleDateString('ko-KR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    });
+}
+
+updateTaskbarClock();
+setInterval(updateTaskbarClock, 1000);
 
 // ==========================================
 // 4. 기본 UI 이벤트 리스너
@@ -51,6 +77,8 @@ const quizChoicesContainer = document.getElementById('quizChoicesContainer');
 // [메일] EXE 버튼 클릭 시 GameScene 이동
 exeButton.addEventListener('click', () => {
     mailModal.classList.add('hidden');
+    desktopShell.classList.add('hidden');
+    document.body.classList.add('exe-mode');
     const mailScene = game.scene.getScene('MailScene');
     mailScene.scene.start('GameScene'); 
 });
@@ -96,6 +124,11 @@ async function checkAnswer(selectedIndex) {
 // ==========================================
 window.addEventListener('open-mail-modal', () => {
     mailModal.classList.remove('hidden');
+});
+
+window.addEventListener('show-desktop-shell', () => {
+    desktopShell.classList.remove('hidden');
+    document.body.classList.remove('boot-mode');
 });
 
 window.addEventListener('open-quiz-modal', async (event) => {
