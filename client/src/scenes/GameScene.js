@@ -6,6 +6,7 @@ export default class GameScene extends Phaser.Scene {
         super('GameScene');
         // 힌트 텍스트 객체들을 담을 배열
         this.hintTextObjects = [];
+
         this.layout = {
             left: 42,
             top: 34,
@@ -29,7 +30,7 @@ export default class GameScene extends Phaser.Scene {
         this.createRightPanel(width, height);
         this.createEmployeeList(uiGraphics);
 
-        // ★ HTML(main.js)에서 보내는 힌트 해제 이벤트 수신
+        // HTML(main.js)에서 보내는 힌트 해제 이벤트 수신
         this.setupEventListeners();
     }
 
@@ -95,7 +96,7 @@ export default class GameScene extends Phaser.Scene {
             fill: '#00ff00'
         });
 
-        // 힌트 슬롯 생성 (처음에는 화면에 보이지 않게 숨김 처리)
+        // 힌트 슬롯 5개 생성 (처음에는 화면에 보이지 않게 숨김 처리)
         this.hintTextObjects = []; 
         const hintSpacing = 96;
         for (let i = 0; i < 5; i++) {
@@ -105,31 +106,34 @@ export default class GameScene extends Phaser.Scene {
                 lineSpacing: 8,
                 wordWrap: { width: hintWrapWidth, useAdvancedWrap: true }
             });
-            textObj.setVisible(false); // ★ 처음에는 숨김
+            textObj.setVisible(false);
             this.hintTextObjects.push(textObj);
         }
 
-        // 정답 확인 버튼
+        // 정답 확인 버튼 영역 설정
         const btnWidth = 300;
         const btnHeight = 80;
         const btnX = width - btnWidth / 2 - 80; 
         const btnY = height - 110;
 
-        const buttonGraphics = this.add.graphics();
-        buttonGraphics.fillStyle(0x002200, 0.95);
-        buttonGraphics.fillRoundedRect(btnX - btnWidth / 2, btnY - btnHeight / 2, btnWidth, btnHeight, 18);
-        buttonGraphics.lineStyle(2, 0x00ff00, 1);
-        buttonGraphics.strokeRoundedRect(btnX - btnWidth / 2, btnY - btnHeight / 2, btnWidth, btnHeight, 18);
+        // [수정] 토글 기능을 위해 버튼 그래픽을 클래스 변수에 할당
+        this.exeButtonGraphics = this.add.graphics();
+        this.exeButtonGraphics.fillStyle(0x002200, 0.95);
+        this.exeButtonGraphics.fillRoundedRect(btnX - btnWidth / 2, btnY - btnHeight / 2, btnWidth, btnHeight, 18);
+        this.exeButtonGraphics.lineStyle(2, 0x00ff00, 1);
+        this.exeButtonGraphics.strokeRoundedRect(btnX - btnWidth / 2, btnY - btnHeight / 2, btnWidth, btnHeight, 18);
         
-        this.add.text(btnX, btnY, '최종 해제 [EXE]', {
+        // [수정] 토글 기능을 위해 텍스트를 클래스 변수에 할당
+        this.exeButtonText = this.add.text(btnX, btnY, '최종 해제 [EXE]', {
             font: 'bold 28px monospace',
             fill: '#00ff00'
         }).setOrigin(0.5);
 
         const checkAnswerBtn = this.add.zone(btnX, btnY, btnWidth, btnHeight);
         checkAnswerBtn.setInteractive({ useHandCursor: true });
+        
         checkAnswerBtn.on('pointerdown', () => {
-            console.log('최종 정답 확인 로직 실행');
+            window.dispatchEvent(new CustomEvent('open-spy-modal'));
         });
     }
 
@@ -156,12 +160,12 @@ export default class GameScene extends Phaser.Scene {
                 font: '20px monospace', fill: '#00cc00'
             }).setOrigin(0, 0.5);
 
-            // 클릭 영역 생성
             const hitArea = this.add.zone(startX + boxWidth / 2, currentY + boxHeight / 2, boxWidth, boxHeight);
             hitArea.setInteractive({ useHandCursor: true });
             
-            // 직원 클릭 시 main.js로 데이터 요청 이벤트 발송
+            // [수정] 현재 모드에 따라 발송하는 이벤트 분기 처리
             hitArea.on('pointerdown', () => {
+                // 직원을 누르면 항상 퀴즈 팝업이 뜹니다.
                 window.dispatchEvent(new CustomEvent('open-quiz-modal', { 
                     detail: { id: i, name: `직원 ${i}` } 
                 }));
@@ -173,11 +177,10 @@ export default class GameScene extends Phaser.Scene {
         window.addEventListener('hint-unlocked', (event) => {
             const newHint = event.detail.hintText;
 
-            // ★ 아직 화면에 보이지 않는(visible이 false인) 첫 번째 힌트 슬롯 찾기
+            // 아직 화면에 보이지 않는 첫 번째 힌트 슬롯 찾기
             const hiddenHintObj = this.hintTextObjects.find(obj => !obj.visible);
             
             if (hiddenHintObj) {
-                // 텍스트를 채우고 화면에 표시
                 hiddenHintObj.setText(`[*] ${newHint}`);
                 hiddenHintObj.setVisible(true); 
             }

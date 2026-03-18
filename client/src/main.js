@@ -48,6 +48,9 @@ const quizQuestionText = document.getElementById('quizQuestionText');
 const quizChoicesContainer = document.getElementById('quizChoicesContainer');
 const taskbarTime = document.getElementById('taskbarTime');
 const taskbarDate = document.getElementById('taskbarDate');
+const spyModal = document.getElementById('spyModal');
+const closeSpyBtn = document.getElementById('closeSpyBtn');
+const spyChoicesContainer = document.getElementById('spyChoicesContainer');
 
 document.body.classList.add('boot-mode');
 desktopShell.classList.add('hidden');
@@ -162,6 +165,57 @@ window.addEventListener('open-quiz-modal', async (event) => {
         quizQuestionText.innerHTML = '> [ERROR] 서버 연결에 실패했습니다.';
     }
 });
+
+// ==========================================
+// 스파이 지목 모달 제어 및 검증 로직
+// ==========================================
+// 닫기 버튼 로직
+closeSpyBtn.addEventListener('click', () => {
+    spyModal.classList.add('hidden');
+});
+
+// Phaser에서 모달 열기 이벤트 수신
+window.addEventListener('open-spy-modal', () => {
+    // UI 초기화
+    spyChoicesContainer.innerHTML = '';
+    spyModal.classList.remove('hidden');
+
+    // 5명의 직원 선택 버튼 동적 생성
+    for (let i = 1; i <= 5; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'choice-btn';
+        btn.textContent = `TARGET_직원 ${i}`;
+        // 버튼 클릭 시 검증 함수 호출
+        btn.onclick = () => checkSpyAnswer(i, `직원 ${i}`);
+        spyChoicesContainer.appendChild(btn);
+    }
+});
+
+// 스파이 검증 API 통신 함수
+async function checkSpyAnswer(id, name) {
+    if (!confirm(`[SYSTEM] 정말 TARGET_${name}을(를) 내부 스파이로 지목하시겠습니까?`)) {
+        return;
+    }
+
+    try {
+        const response = await axios.post('http://localhost:3000/api/spy/check', {
+            employeeId: id
+        });
+
+        if (response.data.isSpy) {
+            alert(`[SUCCESS] 정답입니다! TARGET_${name}이(가) 스파이로 판명되었습니다.\n시스템 보안이 정상화되었습니다.`);
+            spyModal.classList.add('hidden');
+            // TODO: 게임 클리어 엔딩 처리
+        } else {
+            alert(`[FAILED] 오답입니다. TARGET_${name}은(는) 스파이가 아닙니다.\n보안 시스템에 치명적인 오류가 발생합니다!`);
+            spyModal.classList.add('hidden');
+            // TODO: 오답 페널티 처리
+        }
+    } catch (error) {
+        console.error('스파이 확인 요청 실패:', error);
+        alert('[ERROR] 서버와의 통신에 실패했습니다.');
+    }
+}
 
 // ==========================================
 // 7. 클릭 제한 및 에러 모달 제어 로직

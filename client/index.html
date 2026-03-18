@@ -100,6 +100,20 @@
             <button id="closeErrorBtn" style="margin-top: 16px; padding: 8px 16px; background-color: #ff4444; color: white; border: none; border-radius: 4px; cursor: pointer;">확인</button>
         </div>
     </div>
+
+    <div id="spyModal" class="terminal-modal hidden">
+        <div class="terminal-header">
+            <span id="spyTitle">> SYSTEM_OVERRIDE : 스파이 지목</span>
+            <button id="closeSpyBtn" class="close-btn">X</button>
+        </div>
+        
+        <div class="terminal-body">
+            <div id="spyQuestionText">> 수집된 데이터를 바탕으로 내부 스파이를 지목하십시오.<br>> 단 한 번의 기회만 주어집니다.</div>
+            
+            <div id="spyChoicesContainer" class="choices-container">
+                </div>
+        </div>
+    </div>
     
   </div>
   <script type="module" src="/src/main.js"></script>

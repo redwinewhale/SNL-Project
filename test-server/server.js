@@ -39,6 +39,24 @@ app.post('/api/quiz/success', (req, res) => {
     res.status(200).json({ message: "데이터 동기화 완료" });
 });
 
+// ==========================================
+// 3. 스파이 정답 확인을 위한 POST API
+// ==========================================
+// 테스트를 위해 3번 직원을 스파이로 설정합니다.
+const SPY_EMPLOYEE_ID = 3; 
+
+app.post('/api/spy/check', (req, res) => {
+    const { employeeId } = req.body;
+    
+    // 프론트에서 넘어온 id(숫자 또는 문자열)를 안전하게 숫자로 변환하여 비교합니다.
+    const isSpy = parseInt(employeeId, 10) === SPY_EMPLOYEE_ID;
+
+    console.log(`[SPY CHECK] TARGET_직원 ${employeeId} 지목됨. 스파이 여부: ${isSpy}`);
+    
+    // 결과를 JSON 형태로 프론트엔드에 응답합니다.
+    res.status(200).json({ isSpy: isSpy });
+});
+
 // 서버 실행
 app.listen(PORT, () => {
     console.log(`임시 테스트 서버가 http://localhost:${PORT} 에서 실행 중입니다.`);
