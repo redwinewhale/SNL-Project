@@ -162,3 +162,32 @@ window.addEventListener('open-quiz-modal', async (event) => {
         quizQuestionText.innerHTML = '> [ERROR] 서버 연결에 실패했습니다.';
     }
 });
+
+// ==========================================
+// 7. 클릭 제한 및 에러 모달 제어 로직
+// ==========================================
+const errorModal = document.getElementById('errorModal');
+const closeErrorBtn = document.getElementById('closeErrorBtn');
+
+// 클릭 시 에러를 발생시킬 클래스들을 모두 선택합니다.
+// 바탕화면 아이콘, 윈도우 시작 버튼, 검색 버튼, 작업표시줄 앱들
+const blockedElements = document.querySelectorAll('.desktop-icon, .windows-badge, .search-pill, .taskbar-app');
+
+// 닫기 버튼을 누르면 에러 창을 다시 숨깁니다.
+closeErrorBtn.addEventListener('click', () => {
+    errorModal.classList.add('hidden');
+});
+
+// 선택한 모든 요소에 클릭 이벤트를 달아줍니다.
+blockedElements.forEach(element => {
+    element.addEventListener('click', () => {
+        // 이미 메일 창(.exe 실행창)이나 게임 화면으로 넘어간 상태라면 
+        // 에러를 띄우지 않도록 방어 로직을 추가할 수 있습니다.
+        if (document.body.classList.contains('boot-mode') || document.body.classList.contains('exe-mode')) {
+            return;
+        }
+        
+        // 에러 모달 표시
+        errorModal.classList.remove('hidden');
+    });
+});

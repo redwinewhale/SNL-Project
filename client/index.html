@@ -73,7 +73,7 @@
         <div class="mail-content">
             <h2 class="mail-title">안내 메일</h2>
             <hr>
-            <p>보안 점검 프로그램(보안.exe)을 실행하시겠습니까?</p>
+            <p>보안 점검 프로그램(보안.exe)을 실행하시겠습니까?(게임 설명 들어가야함)</p>
             <button id="exeButton">보안.exe 실행</button>
         </div>
     </div>
@@ -91,6 +91,16 @@
                 </div>
         </div>
     </div>
+
+    <div id="errorModal" class="hidden">
+        <div class="error-content" style="background-color: #1a1a1a; border: 2px solid #ff4444; padding: 24px; border-radius: 8px; color: white; text-align: center; box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);">
+            <h2 style="color: #ff4444; margin-top: 0;">[SYSTEM ERROR] 접근 거부됨</h2>
+            <hr style="border-color: #555;">
+            <p>현재 시스템이 잠겨 있습니다.<br>우측 하단의 <strong>[긴급] 알림 메일</strong>을 먼저 확인해 주십시오.</p>
+            <button id="closeErrorBtn" style="margin-top: 16px; padding: 8px 16px; background-color: #ff4444; color: white; border: none; border-radius: 4px; cursor: pointer;">확인</button>
+        </div>
+    </div>
+    
   </div>
   <script type="module" src="/src/main.js"></script>
 </body>

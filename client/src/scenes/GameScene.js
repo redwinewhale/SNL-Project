@@ -98,7 +98,7 @@ export default class GameScene extends Phaser.Scene {
         // 힌트 슬롯 생성 (처음에는 화면에 보이지 않게 숨김 처리)
         this.hintTextObjects = []; 
         const hintSpacing = 96;
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 5; i++) {
             const textObj = this.add.text(panelX, panelTop + 100 + (i * hintSpacing), '', {
                 font: '21px monospace',
                 fill: '#00ff00',

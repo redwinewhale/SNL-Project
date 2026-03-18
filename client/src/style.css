@@ -45,15 +45,25 @@ body.boot-mode {
     inset: 0;
 }
 
+#errorModal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    pointer-events: auto;
+}
+
 #desktop-shell {
     overflow: hidden;
-    z-index: 0;
+    /* z-index: 0; */
     pointer-events: none;
 }
 
 .desktop-gradient {
     position: absolute;
     inset: 0;
+    z-index: 0;
     background:
         radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.16), transparent 18%),
         linear-gradient(135deg, rgba(255, 255, 255, 0.06), transparent 45%),
@@ -67,6 +77,8 @@ body.boot-mode {
     display: flex;
     flex-direction: column;
     gap: 18px;
+    z-index: 2;
+    pointer-events: auto;
 }
 
 .desktop-icon {
@@ -188,6 +200,8 @@ body.boot-mode {
     background: var(--taskbar-bg);
     box-shadow: 0 14px 48px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(16px);
+    z-index: 2;
+    pointer-events: auto;
 }
 
 .taskbar-left,
@@ -634,4 +648,5 @@ hr {
         width: 48px;
         height: 48px;
     }
+    
 }
