@@ -52,6 +52,11 @@ const spyModal = document.getElementById('spyModal');
 const closeSpyBtn = document.getElementById('closeSpyBtn');
 const spyChoicesContainer = document.getElementById('spyChoicesContainer');
 
+const nextFloorModal = document.getElementById('nextFloorModal');
+const nextFloorText = document.getElementById('nextFloorText');
+const nextFloorBtn = document.getElementById('nextFloorBtn');
+let globalCurrentFloor = 1;
+
 document.body.classList.add('boot-mode');
 desktopShell.classList.add('hidden');
 
@@ -203,10 +208,20 @@ async function checkSpyAnswer(id, name) {
         });
 
         if (response.data.isSpy) {
-            alert(`[SUCCESS] 정답입니다! TARGET_${name}이(가) 스파이로 판명되었습니다.\n시스템 보안이 정상화되었습니다.`);
+            // [성공 시 수정된 로직]
             spyModal.classList.add('hidden');
-            // TODO: 게임 클리어 엔딩 처리
+            
+            if (globalCurrentFloor < 5) {
+                // 1~4층일 경우 다음 층 이동 모달 띄우기
+                nextFloorText.innerHTML = `[SUCCESS] 정답입니다!<br>TARGET_${name}이(가) 스파이로 판명되었습니다.<br>시스템 보안이 정상화되었습니다.`;
+                nextFloorModal.classList.remove('hidden');
+            } else {
+                // 5층을 클리어했을 경우 최종 엔딩
+                alert(`[SUCCESS] 5층의 모든 스파이를 검거했습니다!\n게임을 최종 클리어하셨습니다!`);
+                // TODO: 게임 클리어 최종 씬(Scene) 이동이나 축하 모달 띄우기
+            }
         } else {
+            // 오답 처리 (유지)
             alert(`[FAILED] 오답입니다. TARGET_${name}은(는) 스파이가 아닙니다.\n보안 시스템에 치명적인 오류가 발생합니다!`);
             spyModal.classList.add('hidden');
             // TODO: 오답 페널티 처리
@@ -244,4 +259,15 @@ blockedElements.forEach(element => {
         // 에러 모달 표시
         errorModal.classList.remove('hidden');
     });
+});
+
+
+nextFloorBtn.addEventListener('click', () => {
+    globalCurrentFloor++; // 층수 증가
+    nextFloorModal.classList.add('hidden'); // 모달 숨기기
+    
+    // Phaser 씬으로 다음 층 시작 이벤트와 증가된 층수 데이터 발송
+    window.dispatchEvent(new CustomEvent('next-floor-start', { 
+        detail: { floor: globalCurrentFloor } 
+    }));
 });

@@ -6,6 +6,7 @@ export default class GameScene extends Phaser.Scene {
         super('GameScene');
         // 힌트 텍스트 객체들을 담을 배열
         this.hintTextObjects = [];
+        this.currentFloor = 1;
 
         this.layout = {
             left: 42,
@@ -58,7 +59,7 @@ export default class GameScene extends Phaser.Scene {
         this.add.circle(frameX + 48, frameY + 32, 6, 0xc8ffd5);
         this.add.circle(frameX + 68, frameY + 32, 6, 0xe8fff0);
 
-        this.add.text(frameX + 100, frameY + 19, 'Security Guardian Console', {
+        this.titleText = this.add.text(frameX + 100, frameY + 19, `[${this.currentFloor}F] Security Guardian Console`, {
             font: '600 24px Segoe UI',
             color: '#e0ffea'
         });
@@ -184,6 +185,18 @@ export default class GameScene extends Phaser.Scene {
                 hiddenHintObj.setText(`[*] ${newHint}`);
                 hiddenHintObj.setVisible(true); 
             }
+        });
+
+        window.addEventListener('next-floor-start', (event) => {
+            // 층수 업데이트
+            this.currentFloor = event.detail.floor;
+            this.titleText.setText(`[${this.currentFloor}F] Security Guardian Console`);
+
+            // 수집된 힌트 텍스트 화면에서 모두 숨기기 (초기화)
+            this.hintTextObjects.forEach(obj => {
+                obj.setText('');
+                obj.setVisible(false);
+            });
         });
     }
 }
