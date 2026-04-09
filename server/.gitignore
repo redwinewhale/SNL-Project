@@ -1,3 +1,4 @@
 node_modules/
 .env
 test.html
+npm create vite@latest security-gam.txt
