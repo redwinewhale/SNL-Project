@@ -213,7 +213,7 @@ async function checkSpyAnswer(id, name) {
             
             if (globalCurrentFloor < 5) {
                 // 1~4층일 경우 다음 층 이동 모달 띄우기
-                nextFloorText.innerHTML = `[SUCCESS] 정답입니다!<br>TARGET_${name}이(가) 스파이로 판명되었습니다.<br>시스템 보안이 정상화되었습니다.`;
+                nextFloorText.innerHTML = `[SUCCESS] 정답입니다!<br>${name}이(가) 스파이로 판명되었습니다.<br>시스템 보안이 정상화되었습니다.`;
                 nextFloorModal.classList.remove('hidden');
             } else {
                 // 5층을 클리어했을 경우 최종 엔딩
