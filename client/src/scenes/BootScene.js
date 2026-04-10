@@ -65,11 +65,6 @@ export default class BootScene extends Phaser.Scene {
 
 
         // --- 4. 에셋 로드 (테스트용) ---
-        
-        // [테스트] 로딩바 확인용 (나중에 삭제하세요)
-        // for (let i = 0; i < 200; i++) {
-        //     this.load.image('dummy'+i, 'https://labs.phaser.io/assets/sprites/phaser3-logo.png');
-        // }
 
         //this.load.image('mailHome', '/assets/mail.png');
         //this.load.image('employeeIdle', '/assets/employee.png');
