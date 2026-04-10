@@ -16,7 +16,7 @@ SSL 연구실 팀 프로젝트로 진행되는 **웹 기반 보안 교육용 퀴
 * **Client:** Phaser 3 (정적 클릭 인터랙션 구현)
 * **Server:** Node.js, Express
 * **Database:** MySQL
-* **AI Engine:** Ollama (로컬 LLM 구동)
+* **AI Engine:** Ollama (로컬 LLM 구동) - phi3 모델
 * **Sandbox:** Docker (일회용 컨테이너 기반 격리 실행)
 * **Auth:** Google Login API, JWT (JSON Web Token)
 
