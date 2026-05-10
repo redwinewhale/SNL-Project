@@ -13,6 +13,23 @@ const oAuth2Client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const JWT_SECRET ='snl-secret-key';
 
 // ─────────────────────────────────────────
+// 개발용 임시 로그인 (배포 전 반드시 삭제)
+// ─────────────────────────────────────────
+app.post('/api/auth/test-login', (req, res) => {
+    const { nickname } = req.body;
+
+    const token = jwt.sign(
+        { email: 'test@test.com', nickname: nickname || '테스트유저' },
+        JWT_SECRET,
+        { expiresIn: '24h' }
+    );
+
+    res.status(200).json({ token, nickname });
+});
+// ─────────────────────────────────────────
+
+
+// ─────────────────────────────────────────
 // 미들웨어 설정
 // 모든 요청이 라우터 도달 전에 거치는 공통 처리
 // ─────────────────────────────────────────
