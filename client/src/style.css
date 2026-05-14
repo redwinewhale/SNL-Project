@@ -1,652 +1,638 @@
-/* /src/style.css */
+/* =========================================
+   [ 보안 교육 게임 CSS 스타일 가이드 ]
+   
+   1. 기본 초기화 및 레이어 (Reset & Layers)
+   2. 데스크탑 아이콘 설정 (Desktop Icons)
+   3. 하단 작업 표시줄 (Taskbar & Tray)
+   4. 우측 상단 프로필 및 드롭다운 (Profile Widget)
+   5. 메일 알림창 (Mail Notification)
+   6. 공통 모달 시스템 (Base Modal)
+   7. 개별 모달 콘텐츠 디자인
+      7-1. 게임 설명 모달
+      7-2. 문제 풀이 기록 모달
+      7-3. 취약점 종합 분석 모달
+      7-4. 랭킹 및 업적 모달
+      7-5. 안내 메일 상세 모달
+========================================= */
+
+/* =========================================
+   1. 기본 초기화 및 레이어 (Reset & Layers)
+========================================= */
 :root {
-    --desktop-top: #0d305c;
-    --desktop-bottom: #081523;
-    --taskbar-bg: rgba(10, 18, 34, 0.7);
-    --taskbar-border: rgba(255, 255, 255, 0.16);
-    --taskbar-glow: rgba(77, 165, 255, 0.22);
-    --icon-text: #f5f8ff;
-    --window-shadow: 0 22px 70px rgba(0, 0, 0, 0.45);
+    --desktop-top: #1e293b;
+    --desktop-bottom: #0f172a;
+    --taskbar-bg: rgba(15, 23, 42, 0.75);
+    --taskbar-border: rgba(255, 255, 255, 0.1);
+    --icon-text: #f8fafc;
+    --hover-bg: rgba(255, 255, 255, 0.1);
 }
 
 * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 html, body {
-    margin: 0;
-    padding: 0;
     width: 100%;
     height: 100%;
     overflow: hidden;
-}
-
-body {
-    position: relative;
-    background:
-        radial-gradient(circle at top right, rgba(110, 173, 255, 0.35), transparent 28%),
-        linear-gradient(180deg, var(--desktop-top) 0%, #0c2340 45%, var(--desktop-bottom) 100%);
-    font-family: 'Segoe UI', 'Malgun Gothic', sans-serif;
+    font-family: 'Malgun Gothic', 'Segoe UI', sans-serif;
     color: var(--icon-text);
 }
 
-body.exe-mode {
-    background: #000000;
+body {
+    background: radial-gradient(circle at top right, rgba(56, 189, 248, 0.15), transparent 40%),
+                linear-gradient(180deg, var(--desktop-top) 0%, #0f2338 50%, var(--desktop-bottom) 100%);
 }
 
-body.boot-mode {
-    background: #000000;
-}
-
-#desktop-shell,
-#game-container,
-#ui-layer {
+/* 레이어 구조: 바탕화면 UI는 뒤, Phaser 게임 캔버스는 앞 */
+#desktop-shell, #game-container, #ui-layer {
     position: absolute;
     inset: 0;
+    width: 100%;
+    height: 100%;
 }
 
-#errorModal {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 9999;
-    pointer-events: auto;
+#game-container {
+    z-index: 10;
+    pointer-events: none; /* 클릭 이벤트가 뚫고 지나가도록 허용 */
+}
+
+#game-container canvas {
+    display: block;
+    pointer-events: auto; /* Phaser 캔버스 안의 요소는 클릭 가능하게 */
 }
 
 #desktop-shell {
+    z-index: 1;
     overflow: hidden;
-    /* z-index: 0; */
-    pointer-events: none;
+    pointer-events: none; /* 기본적으로 비활성화, DesktopScene.js에서 auto로 변경됨 */
 }
 
-.desktop-gradient {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    background:
-        radial-gradient(circle at 12% 18%, rgba(255, 255, 255, 0.16), transparent 18%),
-        linear-gradient(135deg, rgba(255, 255, 255, 0.06), transparent 45%),
-        linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.15) 100%);
-}
-
+/* =========================================
+   2. 데스크탑 아이콘 설정 (Desktop Icons)
+========================================= */
 .desktop-icons {
     position: absolute;
-    top: 34px;
-    left: 22px;
+    top: 30px;
+    left: 20px; 
     display: flex;
     flex-direction: column;
-    gap: 18px;
-    z-index: 2;
-    pointer-events: auto;
+    gap: 16px;
+    z-index: 5;
 }
 
 .desktop-icon {
-    width: 88px;
+    width: 74px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 2px;
+    padding: 6px;
+    border-radius: 8px;
     text-align: center;
-    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
-    font-size: 14px;
+    font-size: 12px;
+    font-weight: 500;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.desktop-icon:hover {
+    background-color: var(--hover-bg);
+    transform: translateY(-2px);
 }
 
 .icon-art {
     position: relative;
-    width: 56px;
-    height: 56px;
-    border-radius: 16px;
-    backdrop-filter: blur(6px);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 10px 24px rgba(0, 0, 0, 0.26);
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.2), 0 8px 16px rgba(0, 0, 0, 0.4);
+    transform: scale(0.8); 
+    transform-origin: center;
+    margin-bottom: -6px;
 }
-
-.recycle-icon {
-    background: linear-gradient(180deg, rgba(232, 247, 255, 0.95), rgba(101, 191, 255, 0.9));
+/* 사내 메일함 (편지 봉투 스타일) */
+.mail-icon {
+    background: linear-gradient(180deg, #f1f5f9 0%, #cbd5e1 100%);
 }
-
-.recycle-icon::before {
+.mail-icon::before {
     content: '';
     position: absolute;
-    inset: 12px 17px 14px;
-    border: 3px solid rgba(3, 91, 152, 0.9);
-    border-top: none;
-    border-radius: 0 0 10px 10px;
+    inset: 12px 10px;
+    background: #ffffff;
+    border-radius: 2px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
-
-.recycle-icon::after {
+.mail-icon::after {
     content: '';
     position: absolute;
-    top: 10px;
-    left: 18px;
-    width: 20px;
-    height: 6px;
-    border-radius: 999px;
-    background: rgba(3, 91, 152, 0.9);
+    top: 12px; left: 10px;
+    /* 편지 봉투 덮개(삼각형) 모양 구현 */
+    border-left: 16px solid transparent;
+    border-right: 16px solid transparent;
+    border-top: 14px solid #94a3b8; 
 }
 
-.folder-icon {
-    background: linear-gradient(180deg, #ffd96a 0%, #efaf24 100%);
-}
+/* 게임 설명 (보라색 책/문서) */
+.book-icon { background: linear-gradient(180deg, #a78bfa 0%, #8b5cf6 100%); }
+.book-icon::before { content: ''; position: absolute; top: 10px; bottom: 10px; left: 14px; width: 24px; background: #ede9fe; border-radius: 2px; box-shadow: -4px 0 0 rgba(0,0,0,0.2); }
+.book-icon::after { content: ''; position: absolute; top: 16px; left: 18px; width: 14px; height: 2px; background: #c4b5fd; box-shadow: 0 6px 0 #c4b5fd, 0 12px 0 #c4b5fd; }
 
-.folder-icon::before {
-    content: '';
-    position: absolute;
-    top: 10px;
-    left: 8px;
-    width: 23px;
-    height: 10px;
-    border-radius: 8px 8px 0 0;
-    background: rgba(255, 236, 164, 0.95);
-}
+/* 문제 풀이 기록 (노란색 폴더) */
+.folder-icon { background: linear-gradient(180deg, #fcd34d 0%, #f59e0b 100%); }
+.folder-icon::before { content: ''; position: absolute; top: 8px; left: 6px; width: 20px; height: 10px; border-radius: 4px 4px 0 0; background: #fef3c7; }
+.folder-icon::after { content: ''; position: absolute; left: 5px; right: 5px; bottom: 8px; height: 28px; border-radius: 6px; background: #fbbf24; border-top: 1px solid rgba(255,255,255,0.4); }
 
-.folder-icon::after {
-    content: '';
-    position: absolute;
-    left: 7px;
-    right: 7px;
-    bottom: 11px;
-    height: 26px;
-    border-radius: 10px;
-    background: rgba(255, 203, 75, 0.98);
-}
+/* 취약점 분석 (파이 차트) */
+.browser-icon { border-radius: 50%; background: radial-gradient(circle at center, #ffffff 0 25%, transparent 26%), conic-gradient(from 45deg, #ef4444 0 25%, #eab308 25% 50%, #22c55e 50% 75%, #3b82f6 75% 100%); }
 
-.browser-icon {
-    border-radius: 50%;
-    background:
-        radial-gradient(circle at center, #e9f8ff 0 28%, transparent 29%),
-        conic-gradient(from 30deg, #ff5247 0 25%, #ffcf57 25% 50%, #31b55d 50% 75%, #2a7cff 75% 100%);
-}
+/* 실습 복습 (터미널/드라이브) */
+.drive-icon { background: linear-gradient(180deg, #cbd5e1 0%, #64748b 100%); }
+.drive-icon::before { content: ''; position: absolute; left: 8px; right: 8px; bottom: 12px; height: 16px; border-radius: 4px; background: #1e293b; }
+.drive-icon::after { content: ''; position: absolute; right: 14px; bottom: 16px; width: 6px; height: 6px; border-radius: 50%; background: #4ade80; box-shadow: 0 0 8px #4ade80; }
 
-.drive-icon {
-    background: linear-gradient(180deg, rgba(226, 233, 241, 0.95), rgba(111, 121, 135, 0.95));
-}
+/* 랭킹 및 업적 (파란색 메달) */
+.recycle-icon { background: linear-gradient(180deg, #e0f2fe 0%, #38bdf8 100%); }
+.recycle-icon::before { content: ''; position: absolute; inset: 12px 14px 14px; border: 3px solid #0284c7; border-top: none; border-radius: 0 0 8px 8px; }
 
-.drive-icon::before {
-    content: '';
-    position: absolute;
-    left: 8px;
-    right: 8px;
-    bottom: 14px;
-    height: 15px;
-    border-radius: 10px;
-    background: rgba(42, 48, 56, 0.92);
-}
 
-.drive-icon::after {
-    content: '';
-    position: absolute;
-    right: 13px;
-    bottom: 19px;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #62ff7f;
-    box-shadow: 0 0 10px rgba(98, 255, 127, 0.7);
-}
-
+/* =========================================
+   3. 하단 작업 표시줄 (Taskbar & Tray)
+========================================= */
 .taskbar {
     position: absolute;
-    left: 16px;
-    right: 16px;
-    bottom: 14px;
-    height: 78px;
-    padding: 12px 18px;
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 16px;
+    width: 95%;
+    max-width: 1200px;
+    height: 64px;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
     align-items: center;
     border: 1px solid var(--taskbar-border);
-    border-radius: 24px;
+    border-radius: 20px;
     background: var(--taskbar-bg);
-    box-shadow: 0 14px 48px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(16px);
-    z-index: 2;
-    pointer-events: auto;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    z-index: 5;
 }
 
-.taskbar-left,
-.taskbar-center,
-.taskbar-right {
+.taskbar-left, .taskbar-center, .taskbar-right {
     display: flex;
     align-items: center;
-}
-
-.taskbar-center {
-    justify-content: center;
-    gap: 12px;
-}
-
-.taskbar-right {
-    justify-content: flex-end;
-    gap: 14px;
+    gap: 16px;
 }
 
 .windows-badge {
     display: grid;
-    grid-template-columns: repeat(2, 10px);
-    gap: 3px;
-    padding: 10px;
-    border-radius: 14px;
-    background: rgba(255, 255, 255, 0.08);
+    grid-template-columns: repeat(2, 12px);
+    gap: 2px;
+    padding: 8px;
+    border-radius: 10px;
+    cursor: pointer;
+    background: rgba(255,255,255,0.05);
 }
-
 .windows-badge span {
-    width: 10px;
-    height: 10px;
-    background: #8ac4ff;
-    box-shadow: 0 0 12px rgba(84, 180, 255, 0.45);
-}
-
-.search-pill,
-.taskbar-app,
-.clock-block {
-    border: 1px solid rgba(255, 255, 255, 0.11);
-    background: rgba(255, 255, 255, 0.08);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    width: 12px; height: 12px;
+    background: #38bdf8;
+    border-radius: 2px;
 }
 
 .search-pill {
-    min-width: 168px;
-    height: 46px;
-    padding: 0 16px;
-    border-radius: 999px;
+    width: 180px; height: 40px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.08);
     display: flex;
     align-items: center;
-    gap: 12px;
-    color: rgba(255, 255, 255, 0.78);
+    padding: 0 16px;
+    color: rgba(255, 255, 255, 0.6);
     font-size: 14px;
-}
-
-.search-icon {
-    width: 15px;
-    height: 15px;
-    border: 2px solid rgba(255, 255, 255, 0.8);
-    border-radius: 50%;
-    position: relative;
-}
-
-.search-icon::after {
-    content: '';
-    position: absolute;
-    right: -5px;
-    bottom: -5px;
-    width: 7px;
-    height: 2px;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.8);
-    transform: rotate(45deg);
-}
-
-.taskbar-app {
-    width: 48px;
-    height: 48px;
-    border-radius: 16px;
-    display: grid;
-    place-items: center;
-}
-
-.app-mark {
-    position: relative;
-    display: block;
-}
-
-.browser-mark {
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background:
-        radial-gradient(circle at center, #f1fbff 0 30%, transparent 31%),
-        conic-gradient(from 30deg, #ff6558 0 25%, #ffd25d 25% 50%, #39bc62 50% 75%, #2f84ff 75% 100%);
-}
-
-.doc-mark {
-    width: 18px;
-    height: 22px;
-    border-radius: 4px;
-    background: linear-gradient(180deg, #eff5ff 0%, #6ba8ff 100%);
-}
-
-.doc-mark::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    border-width: 0 0 8px 8px;
-    border-style: solid;
-    border-color: transparent transparent rgba(17, 71, 152, 0.75) transparent;
-}
-
-.folder-mark {
-    width: 24px;
-    height: 16px;
-    border-radius: 4px;
-    background: linear-gradient(180deg, #ffe28b 0%, #f1b128 100%);
-}
-
-.folder-mark::before {
-    content: '';
-    position: absolute;
-    top: -4px;
-    left: 1px;
-    width: 10px;
-    height: 5px;
-    border-radius: 3px 3px 0 0;
-    background: #ffe9ab;
-}
-
-.chat-mark {
-    width: 24px;
-    height: 18px;
-    border-radius: 8px;
-    background: linear-gradient(180deg, #90d1ff 0%, #3d8eff 100%);
-}
-
-.chat-mark::after {
-    content: '';
-    position: absolute;
-    left: 4px;
-    bottom: -5px;
-    width: 8px;
-    height: 8px;
-    background: #3d8eff;
-    transform: rotate(45deg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .tray-icons {
     display: flex;
     align-items: center;
     gap: 10px;
-}
-
-.tray-icon {
-    position: relative;
-    display: inline-block;
-}
-
-.wifi-icon {
-    width: 18px;
-    height: 12px;
-    border: 2px solid transparent;
-    border-top-color: #ffffff;
-    border-radius: 50%;
-}
-
-.wifi-icon::before,
-.wifi-icon::after {
-    content: '';
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    border: 2px solid transparent;
-    border-top-color: #ffffff;
-    border-radius: 50%;
-}
-
-.wifi-icon::before {
-    top: 3px;
-    width: 12px;
-    height: 8px;
-}
-
-.wifi-icon::after {
-    top: 8px;
-    width: 4px;
-    height: 2px;
-    background: #ffffff;
-    border: none;
-    border-radius: 50%;
-}
-
-.volume-icon {
-    width: 18px;
-    height: 16px;
-}
-
-.volume-icon::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 4px;
-    width: 10px;
-    height: 8px;
-    background: #ffffff;
-    clip-path: polygon(0 25%, 40% 25%, 100% 0, 100% 100%, 40% 75%, 0 75%);
-}
-
-.volume-icon::after {
-    content: '';
-    position: absolute;
-    left: 12px;
-    top: 2px;
-    width: 6px;
-    height: 10px;
-    border-right: 2px solid #ffffff;
-    border-radius: 50%;
-}
-
-.battery-icon {
-    width: 22px;
-    height: 12px;
-    border: 2px solid #ffffff;
-    border-radius: 4px;
-}
-
-.battery-icon::before {
-    content: '';
-    position: absolute;
-    top: 3px;
-    right: -5px;
-    width: 3px;
-    height: 6px;
-    border-radius: 1px;
-    background: #ffffff;
-}
-
-.battery-icon::after {
-    content: '';
-    position: absolute;
-    inset: 2px;
-    border-radius: 2px;
-    background: linear-gradient(90deg, #98ff7e 0%, #42cf60 100%);
+    opacity: 0.85;
 }
 
 .clock-block {
-    min-width: 116px;
-    padding: 8px 14px;
-    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 6px 16px;
+    border-radius: 12px;
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
-    gap: 2px;
-    text-align: right;
+    align-items: center;
+    justify-content: center;
+    color: #f8fafc;
+    min-width: 90px;
+    cursor: default;
+    transition: background 0.2s;
 }
+.clock-block:hover { background: rgba(255, 255, 255, 0.15); }
+.clock-block strong { font-size: 16px; font-weight: bold; letter-spacing: 1px; line-height: 1.2; }
+.clock-block span { font-size: 11px; color: rgba(255, 255, 255, 0.7); margin-top: 2px; }
 
-.clock-block strong {
-    font-size: 17px;
-    letter-spacing: 0.04em;
-}
 
-.clock-block span {
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.82);
-}
-
-#game-container {
-    width: 100vw;
-    height: 100vh;
-    z-index: 1;
-}
-
-#game-container canvas {
-    display: block;
-}
-
-#ui-layer {
-    pointer-events: none;
-    z-index: 20;
-}
-
-.hidden {
-    display: none !important;
-}
-
-#mailModal {
+/* =========================================
+   4. 우측 상단 프로필 및 드롭다운 (Profile Widget)
+========================================= */
+.profile-container {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    width: min(600px, calc(100vw - 32px));
-    transform: translate(-50%, -50%);
+    top: 24px;
+    right: 30px;
+    z-index: 60;
+}
+
+.profile-avatar-btn {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: rgba(15, 23, 42, 0.8);
+    border: 2px solid rgba(56, 189, 248, 0.5);
+    display: flex; justify-content: center; align-items: center;
+    font-size: 24px; cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s, border-color 0.2s;
+}
+.profile-avatar-btn:hover { transform: scale(1.05); border-color: #38bdf8; }
+
+.profile-dropdown {
+    position: absolute; top: 60px; right: 0;
+    width: 280px;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
+    opacity: 0; pointer-events: none; transform: translateY(-10px);
+    transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.profile-dropdown.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+
+.dropdown-header { display: flex; align-items: center; gap: 12px; padding: 20px; border-bottom: 1px dashed rgba(255, 255, 255, 0.15); }
+.dropdown-avatar { width: 44px; height: 44px; border-radius: 50%; background: rgba(255, 255, 255, 0.1); display: flex; justify-content: center; align-items: center; font-size: 20px; }
+.dropdown-user-info { flex: 1; }
+.dropdown-name { font-size: 16px; font-weight: bold; color: #f8fafc; display: flex; align-items: center; gap: 6px; }
+.edit-icon { font-size: 12px; cursor: pointer; opacity: 0.6; transition: opacity 0.2s; }
+.edit-icon:hover { opacity: 1; }
+.dropdown-rank { font-size: 12px; color: #38bdf8; margin-top: 4px; font-weight: 500; }
+
+.dropdown-body { padding: 16px 20px; display: flex; flex-direction: column; gap: 16px; }
+.dropdown-section { display: flex; flex-direction: column; gap: 8px; }
+.section-label-row { display: flex; justify-content: space-between; font-size: 12px; color: #cbd5e1; }
+
+.dropdown-exp-bg { width: 100%; height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 3px; overflow: hidden; }
+.dropdown-exp-fill { height: 100%; background: linear-gradient(90deg, #38bdf8, #818cf8); border-radius: 3px; transition: width 0.5s ease-out; }
+
+.info-row { display: flex; justify-content: space-between; font-size: 13px; background: rgba(0, 0, 0, 0.2); padding: 8px 12px; border-radius: 6px; }
+.info-label { color: #94a3b8; }
+.info-value { color: #f8fafc; font-weight: 500; }
+.ai-highlight { color: #fcd34d; }
+
+.dropdown-footer { padding: 12px 20px; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+.logout-btn { width: 100%; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; padding: 10px 0; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: all 0.2s; }
+.logout-btn:hover { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; color: #ffffff; }
+
+
+/* =========================================
+   5. 메일 알림창 (Mail Notification)
+========================================= */
+.mail-notification {
+    position: absolute;
+    right: 30px;
+    bottom: 85px; 
+    width: 360px;
+    background: rgba(17, 17, 17, 0.94);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 16px;
-    background-color: rgba(255, 255, 255, 0.96);
-    box-shadow: var(--window-shadow);
-    pointer-events: auto;
-    font-family: 'Malgun Gothic', sans-serif;
-}
-
-.mail-content {
-    padding: 30px;
-    color: #333;
-}
-
-.mail-title {
-    margin-top: 0;
-    font-size: 22px;
-}
-
-hr {
-    border: 0;
-    border-top: 1px solid #ccc;
-    margin: 20px 0;
-}
-
-#exeButton {
-    display: block;
-    width: 100%;
-    margin-top: 30px;
-    padding: 15px;
-    font-size: 18px;
-    font-weight: bold;
-    color: #1a73e8;
-    background-color: #f1f3f4;
-    border: 2px solid #dadce0;
-    border-radius: 10px;
+    padding: 18px 24px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+    z-index: 50; 
     cursor: pointer;
-    transition: background-color 0.2s;
+    transform: translateY(50px);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.5s ease-out;
 }
+.mail-notification.show { transform: translateY(0); opacity: 1; pointer-events: auto; }
+.mail-noti-title { color: #00ff00; font-weight: bold; font-size: 16px; margin-bottom: 8px; }
+.mail-noti-desc { color: #e2e8f0; font-size: 14px; line-height: 1.5; }
 
-#exeButton:hover {
-    background-color: #e8f0fe;
-}
 
-.terminal-modal {
+/* =========================================
+   6. 공통 모달 시스템 (Base Modal)
+========================================= */
+.modal-overlay {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    width: min(600px, calc(100vw - 32px));
-    transform: translate(-50%, -50%);
-    background-color: rgba(5, 5, 5, 0.95);
-    border: 2px solid #00ff00;
-    box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
-    pointer-events: auto;
-    font-family: 'Courier New', Courier, monospace;
-    color: #00ff00;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.6); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease-out;
 }
+.modal-overlay.active { opacity: 1; pointer-events: auto; }
 
-.terminal-header {
+.modal-window {
+    background: #1e293b; 
+    width: 650px;
+    max-height: 80%;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform: translateY(20px);
+    transition: transform 0.2s ease-out;
+}
+.modal-overlay.active .modal-window { transform: translateY(0); }
+
+.modal-header {
+    padding: 20px 30px;
+    background: rgba(0, 0, 0, 0.2);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 15px;
-    background-color: #003300;
-    border-bottom: 2px solid #00ff00;
 }
+.modal-title { font-size: 22px; font-weight: bold; color: #fcd34d; }
+.modal-close { background: none; border: none; color: #94a3b8; font-size: 32px; cursor: pointer; transition: color 0.2s; line-height: 1; }
+.modal-close:hover { color: #ef4444; }
 
-#quizTitle {
-    font-weight: bold;
-    font-size: 16px;
+.modal-body {
+    padding: 10px 30px 30px 30px;
+    overflow-y: auto;
 }
+.loading-text { text-align: center; padding: 50px 0; font-size: 18px; color: #94a3b8; }
 
-.close-btn {
-    padding: 0;
-    font-size: 18px;
-    font-weight: bold;
-    color: #00ff00;
-    background: none;
-    border: none;
-    cursor: pointer;
-}
 
-.close-btn:hover {
-    color: #ffffff;
-    text-shadow: 0 0 5px #00ff00;
-}
+/* =========================================
+   7. 개별 모달 콘텐츠 디자인
+========================================= */
 
-.terminal-body {
-    padding: 30px;
-}
+/* --- 7-1. 게임 설명 모달 --- */
+.info-modal-body { padding: 15px 30px 30px 30px; }
+.info-content-scroll { max-height: 450px; overflow-y: auto; color: #e2e8f0; font-size: 16px; line-height: 1.8; padding-right: 15px; }
+.info-content-scroll h3 { color: #a78bfa; font-size: 18px; margin-bottom: 12px; border-bottom: 1px dashed rgba(167, 139, 250, 0.3); padding-bottom: 6px; font-weight: bold; }
+.info-content-scroll p { margin-bottom: 10px; }
+.info-content-scroll ul { padding-left: 24px; margin-bottom: 15px; }
+.info-content-scroll li { margin-bottom: 8px; }
+.info-content-scroll strong { color: #fcd34d; font-weight: bold; }
+.info-content-scroll::-webkit-scrollbar { width: 8px; }
+.info-content-scroll::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 255, 0.2); border-radius: 4px; }
+.info-content-scroll::-webkit-scrollbar-thumb:hover { background-color: rgba(255, 255, 255, 0.4); }
 
-#quizQuestionText {
-    margin-bottom: 30px;
-    font-size: 16px;
-    line-height: 1.6;
-    white-space: pre-line;
-}
+/* --- 7-2. 문제 풀이 기록 모달 --- */
+.history-row { display: flex; justify-content: space-between; align-items: center; padding: 24px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.15); font-size: 20px; }
+.history-row:last-child { border-bottom: none; }
+.history-field { color: #e2e8f0; font-weight: bold; flex: 1; }
+.history-stats { color: #94a3b8; display: flex; gap: 30px; }
+.stat-highlight { color: #38bdf8; font-weight: bold; }
 
-.choices-container {
+.clickable-row { transition: background-color 0.2s, padding-left 0.2s; cursor: pointer; border-radius: 8px; padding: 24px 15px; margin: 0 -15px; }
+.clickable-row:hover { background-color: rgba(255, 255, 255, 0.05); padding-left: 20px; }
+
+.detail-header-nav { display: flex; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px dashed rgba(255, 255, 255, 0.2); }
+.nav-back-btn { background: rgba(255, 255, 255, 0.1); border: none; color: #f8fafc; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; margin-right: 20px; transition: background 0.2s; }
+.nav-back-btn:hover { background: rgba(56, 189, 248, 0.8); }
+.detail-category-title { font-size: 20px; font-weight: bold; color: #e2e8f0; }
+
+.detail-list { display: flex; flex-direction: column; gap: 15px; }
+.detail-item { background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 8px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; }
+.detail-info { flex: 1; padding-right: 20px; }
+.detail-question { font-size: 16px; color: #e2e8f0; margin-bottom: 6px; line-height: 1.4; }
+.detail-attempts { font-size: 14px; color: #94a3b8; }
+.detail-status { padding: 6px 14px; border-radius: 20px; font-weight: bold; font-size: 15px; text-align: center; min-width: 60px; }
+.status-correct { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
+.status-wrong { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+.detail-answer { font-size: 15px; color: #34d399; margin-bottom: 8px; font-weight: 500; }
+.answer-label { color: #94a3b8; font-size: 13px; margin-right: 4px; font-weight: normal; }
+
+/* --- 7-3. 취약점 종합 분석 모달 --- */
+.vuln-scroll-container { max-height: 500px; overflow-y: auto; padding-right: 10px; }
+.vuln-scroll-container::-webkit-scrollbar { width: 6px; }
+.vuln-scroll-container::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 255, 0.2); border-radius: 4px; }
+.vuln-field-group { margin-bottom: 24px; }
+.vuln-field-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; margin-bottom: 12px; border-bottom: 1px dashed rgba(255, 255, 255, 0.2); cursor: pointer; transition: opacity 0.2s; }
+.vuln-field-header:hover { opacity: 0.8; }
+.vuln-field-title { font-size: 18px; font-weight: bold; color: #38bdf8; }
+.vuln-toggle-icon { transition: transform 0.3s ease-in-out; }
+.vuln-field-content { display: flex; flex-direction: column; gap: 12px; overflow: hidden; transition: max-height 0.3s ease-out, opacity 0.3s ease-out; }
+.vuln-field-content.expanded { max-height: 1000px; opacity: 1; }
+.vuln-field-content.collapsed { max-height: 0; opacity: 0; margin: 0; }
+.vuln-item { background: rgba(255, 255, 255, 0.03); padding: 16px 20px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; }
+.vuln-item-left { display: flex; flex-direction: column; gap: 6px; }
+.vuln-sub-name { font-size: 15px; color: #e2e8f0; }
+.vuln-status { font-size: 14px; }
+.vuln-item-right { display: flex; align-items: center; gap: 16px; }
+.vuln-metrics-text { font-size: 14px; color: #cbd5e1; display: flex; align-items: center; }
+.vuln-stars { color: #e2e8f0; letter-spacing: 1px; margin-left: 4px; margin-right: 12px; }
+.vuln-tiny-bar { width: 6px; height: 16px; border-radius: 3px; opacity: 0.8; }
+
+/* --- 7-4. 랭킹 및 업적 모달 --- */
+.rank-achieve-container { display: flex; gap: 30px; }
+.section-half { flex: 1; display: flex; flex-direction: column; }
+.section-title { font-size: 18px; font-weight: bold; color: #fcd34d; margin-bottom: 16px; text-align: center; background: rgba(0, 0, 0, 0.2); padding: 10px; border-radius: 8px; }
+.ranking-list { display: flex; flex-direction: column; gap: 8px; }
+.ranking-item { display: flex; align-items: center; background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 8px; }
+.rank-num { width: 30px; font-weight: bold; font-size: 16px; color: #94a3b8; }
+.rank-name { flex: 1; font-size: 15px; color: #f8fafc; display: flex; align-items: center; }
+.rank-score { font-weight: bold; color: #38bdf8; }
+.rank-1st { background: rgba(251, 191, 36, 0.15); border: 1px solid rgba(251, 191, 36, 0.3); }
+.rank-1st .rank-num { color: #fbbf24; }
+.rank-2nd { background: rgba(226, 232, 240, 0.1); }
+.rank-2nd .rank-num { color: #e2e8f0; }
+.rank-3rd { background: rgba(180, 83, 9, 0.15); }
+.rank-3rd .rank-num { color: #d97706; }
+.rank-me-badge { background: #ef4444; color: white; font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-left: 8px; }
+
+.achieve-list { display: flex; flex-direction: column; gap: 10px; }
+.achieve-item { display: flex; align-items: center; background: rgba(0, 0, 0, 0.2); padding: 12px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.05); transition: all 0.2s; }
+.achieve-icon { font-size: 28px; margin-right: 16px; }
+.achieve-info { flex: 1; }
+.achieve-title { font-weight: bold; color: #e2e8f0; margin-bottom: 4px; }
+.achieve-desc { font-size: 12px; color: #94a3b8; }
+.achieve-locked { opacity: 0.5; filter: grayscale(100%); }
+.achieve-locked .achieve-title { color: #64748b; }
+
+/* --- 7-5. 안내 메일 상세 모달 --- */
+.mail-modal-window { background: #ffffff; width: 600px; border-radius: 12px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); display: flex; flex-direction: column; overflow: hidden; transform: translateY(20px); transition: transform 0.2s ease-out; color: #1e293b; }
+.modal-overlay.active .mail-modal-window { transform: translateY(0); }
+.mail-modal-header { padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; }
+.mail-modal-title { font-size: 20px; font-weight: bold; color: #0f172a; }
+.mail-modal-close { background: none; border: none; color: #94a3b8; font-size: 28px; cursor: pointer; transition: color 0.2s; line-height: 1; }
+.mail-modal-close:hover { color: #ef4444; }
+.mail-modal-body { padding: 0; display: flex; flex-direction: column; }
+.mail-content-scroll { padding: 24px; max-height: 220px; overflow-y: auto; font-size: 14px; line-height: 1.6; color: #475569; border-bottom: 1px dashed #cbd5e1; }
+.mail-content-scroll p { margin-bottom: 10px; }
+.mail-content-scroll ol { padding-left: 20px; margin-bottom: 10px; }
+.mail-content-scroll::-webkit-scrollbar { width: 8px; }
+.mail-content-scroll::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 4px; }
+.mail-action-area { padding: 20px 24px; background-color: #f8fafc; }
+.mail-action-title { font-size: 13px; color: #64748b; margin-bottom: 12px; font-weight: bold; }
+.mail-buttons-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.mail-field-btn { background: #ffffff; border: 1px solid #cbd5e1; padding: 14px 16px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.2s; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); }
+.mail-field-btn:hover { border-color: #3b82f6; box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1); transform: translateY(-2px); }
+.field-name { font-size: 15px; font-weight: bold; color: #0f172a; }
+.field-stars { color: #fbbf24; font-size: 14px; letter-spacing: 2px; }
+
+/* =========================================
+   [ 웹 보안 관제 화면 (Web Security Scene) ]
+========================================= */
+#web-game-ui {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 50;
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    margin-top: 20px;
+    padding: 30px;
+    background: radial-gradient(circle at center, transparent 0%, rgba(2, 6, 23, 0.8) 100%);
+    pointer-events: auto;
+    font-family: 'Courier New', Courier, monospace; /* 터미널 폰트 */
 }
 
-.choice-btn {
-    padding: 12px 15px;
-    font-family: inherit;
-    font-size: 16px;
-    color: #00ff00;
-    text-align: left;
-    background-color: transparent;
-    border: 1px solid #005500;
+.web-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid #334155;
+    padding: 15px 30px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.floor-display {
+    font-size: 24px;
+    color: #38bdf8;
+    font-weight: bold;
+}
+
+.timer-display {
+    font-size: 24px;
+    color: #10b981;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+.web-main-content {
+    display: flex;
+    flex: 1;
+    gap: 30px;
+}
+
+/* 왼쪽: 직원(세션) 목록 */
+.sessions-container {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.section-title {
+    color: #94a3b8;
+    font-size: 18px;
+    margin-bottom: 10px;
+    border-bottom: 1px dashed #334155;
+    padding-bottom: 10px;
+}
+
+.session-block {
+    background: rgba(15, 23, 42, 0.6);
+    border-left: 4px solid #38bdf8;
+    border-top: 1px solid #1e293b;
+    border-right: 1px solid #1e293b;
+    border-bottom: 1px solid #1e293b;
+    padding: 15px 20px;
+    border-radius: 4px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.choice-btn:hover {
-    background-color: #003300;
-    border-color: #00ff00;
-    box-shadow: 0 0 8px rgba(0, 255, 0, 0.4);
+.session-block:hover {
+    background: rgba(56, 189, 248, 0.1);
+    transform: translateX(10px);
+    border-color: #38bdf8;
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
 }
 
-@media (max-width: 960px) {
-    .taskbar {
-        grid-template-columns: auto 1fr auto;
-        gap: 10px;
-        height: 88px;
-        padding: 10px 12px;
-    }
+.session-header { color: #f8fafc; font-weight: bold; font-size: 18px; }
+.session-ip { color: #cbd5e1; font-size: 16px; }
+.session-status { color: #10b981; font-size: 14px; background: rgba(16, 185, 129, 0.1); padding: 4px 8px; border-radius: 4px; }
 
-    .search-pill {
-        min-width: 120px;
-    }
+/* 오른쪽: 단서 로그 및 스파이 버튼 */
+.side-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
 
-    .taskbar-center {
-        gap: 8px;
-    }
+.hint-terminal {
+    flex: 1;
+    background: #020617;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+}
 
-    .desktop-icons {
-        top: 22px;
-        left: 14px;
-        gap: 14px;
-    }
+.terminal-header {
+    background: #1e293b;
+    color: #94a3b8;
+    padding: 10px 15px;
+    font-size: 14px;
+    border-bottom: 1px solid #334155;
+}
 
-    .desktop-icon {
-        width: 72px;
-        font-size: 12px;
-    }
+.terminal-content {
+    padding: 15px;
+    color: #4ade80;
+    font-size: 15px;
+    line-height: 1.6;
+    flex: 1;
+    overflow-y: auto;
+}
 
-    .icon-art {
-        width: 48px;
-        height: 48px;
-    }
-    
+.cursor {
+    animation: blink 1s step-end infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+.spy-btn {
+    background: rgba(220, 38, 38, 0.1);
+    color: #ef4444;
+    border: 2px solid #ef4444;
+    padding: 20px;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    text-shadow: 0 0 5px rgba(239, 68, 68, 0.5);
+    box-shadow: inset 0 0 10px rgba(239, 68, 68, 0.2);
+    transition: all 0.2s;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.spy-btn:hover {
+    background: #ef4444;
+    color: #ffffff;
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
 }
